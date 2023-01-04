@@ -16,9 +16,11 @@ import java.util.List;
 
 public class ListenerClass implements Listener {
     private Plugin instance;
+
     public ListenerClass(Plugin instance) {
         this.instance = instance;
     }
+
     @EventHandler
     public void onBlockBreak(final @NotNull BlockDropItemEvent e) {
         if (!SafeMining.getEnabledUsers().contains(e.getPlayer().getUniqueId())) {

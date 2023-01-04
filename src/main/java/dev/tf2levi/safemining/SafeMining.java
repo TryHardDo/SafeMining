@@ -1,36 +1,51 @@
 package dev.tf2levi.safemining;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import dev.tf2levi.safemining.commands.MainCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.*;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 
 public final class SafeMining extends JavaPlugin {
     private static SafeMining instance;
     private static List<UUID> enabledUsers = new ArrayList<>();
     private static Logger pluginLogger;
     private static File dataFile;
+
+    /*
+     * Static
+     * GETTERS / SETTERS
+     */
+    public static SafeMining getInstance() {
+        return instance;
+    }
+
+    public static List<UUID> getEnabledUsers() {
+        return enabledUsers;
+    }
+
+    public static Logger getPluginLogger() {
+        return pluginLogger;
+    }
+
     @Override
     public void onEnable() {
         instance = this;
         pluginLogger = this.getLogger();
-        dataFile = new File(this.getDataFolder() ,"data.json");
+        dataFile = new File(this.getDataFolder(), "data.json");
 
         Bukkit.getConsoleSender().sendMessage(
                 ChatColor.AQUA + "SafeMining" + this.getDescription().getVersion(),
@@ -79,26 +94,11 @@ public final class SafeMining extends JavaPlugin {
             }
 
             Gson gson = new Gson();
-            enabledUsers = gson.fromJson(contentBuilder.toString(), new TypeToken<ArrayList<UUID>>(){}.getType());
+            enabledUsers = gson.fromJson(contentBuilder.toString(), new TypeToken<ArrayList<UUID>>() {
+            }.getType());
             getPluginLogger().info("Loaded " + enabledUsers.size() + " enabled user UUIDs from " + dataFile.getName());
         } catch (IOException e) {
             System.err.format("IOException: %s%n", e);
         }
-    }
-
-    /*
-     * Static
-     * GETTERS / SETTERS
-     */
-    public static SafeMining getInstance() {
-        return instance;
-    }
-
-    public static List<UUID> getEnabledUsers() {
-        return enabledUsers;
-    }
-
-    public static Logger getPluginLogger() {
-        return pluginLogger;
     }
 }
