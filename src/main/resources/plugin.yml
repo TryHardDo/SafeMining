@@ -1,0 +1,12 @@
+name: SafeMining
+version: '${project.version}'
+main: dev.tf2levi.safemining.SafeMining
+api-version: 1.19
+authors: [ tf2levi ]
+description: This plugin directly places mined blocks inside the block breaker's inventory.
+commands:
+  safemining:
+    description: Main command to enable the plugin feature for the executor player.
+    aliases:
+      - smining
+      - sm
