@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import dev.tf2levi.safemining.commands.MainCommand;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.BufferedReader;
@@ -20,15 +19,12 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 public final class SafeMining extends JavaPlugin {
+    public static String pluginPrefix = "§a§lSafeMining §7● ";
     private static SafeMining instance;
     private static List<UUID> enabledUsers = new ArrayList<>();
     private static Logger pluginLogger;
     private static File dataFile;
 
-    /*
-     * Static
-     * GETTERS / SETTERS
-     */
     public static SafeMining getInstance() {
         return instance;
     }
@@ -41,6 +37,10 @@ public final class SafeMining extends JavaPlugin {
         return pluginLogger;
     }
 
+    public static String getPluginPrefix() {
+        return pluginPrefix;
+    }
+
     @Override
     public void onEnable() {
         instance = this;
@@ -48,11 +48,13 @@ public final class SafeMining extends JavaPlugin {
         dataFile = new File(this.getDataFolder(), "data.json");
 
         Bukkit.getConsoleSender().sendMessage(
-                ChatColor.AQUA + "SafeMining" + this.getDescription().getVersion(),
-                ChatColor.GOLD + "Created by: tf2levi"
+                "§8+",
+                "§8| §eSafeMining §6" + this.getDescription().getVersion(),
+                "§8| §eCreated by: §6tf2levi",
+                "§8+"
         );
 
-        this.init();
+        init();
     }
 
     @Override
