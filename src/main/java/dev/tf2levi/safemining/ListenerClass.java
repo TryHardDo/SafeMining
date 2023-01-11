@@ -1,13 +1,12 @@
 package dev.tf2levi.safemining;
 
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDropItemEvent;
+import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.inventory.ItemStack;
@@ -32,9 +31,27 @@ public class ListenerClass implements Listener {
     }
 
     @EventHandler
+    public void onSleep(final @NotNull PlayerBedEnterEvent e) {
+        if (e.getBedEnterResult() != PlayerBedEnterEvent.BedEnterResult.OK) {
+            return;
+        }
+
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (p.isSleeping()) {
+                continue;
+            }
+
+            if (!p.getUniqueId().equals(e.getPlayer().getUniqueId())) {
+                p.sendTitle("§4ALVÁS!", "§7Kéne aludni!", 10, 100, 20);
+            }
+        }
+    }
+
+    @EventHandler
     public void onTeleport(final @NotNull PlayerTeleportEvent e) {
         Player player = e.getPlayer();
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
+        player.getWorld().spawnParticle(Particle.PORTAL, player.getLocation(), 30, 0, 2, 0);
     }
 
     @EventHandler

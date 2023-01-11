@@ -73,17 +73,22 @@ public final class SafeMining extends JavaPlugin {
         try (final BufferedWriter writer = Files.newBufferedWriter(dataFile.toPath(), StandardCharsets.UTF_8, StandardOpenOption.CREATE)) {
             Gson gson = new Gson();
             String jsonString = gson.toJson(enabledUsers);
+
             writer.write(jsonString, 0, jsonString.length());
             writer.flush();
-
             getPluginLogger().info("Data saved to " + dataFile.getPath() + " wrote " + dataFile.length() + " bytes.");
         } catch (IOException e) {
-            System.err.format("IOException: %s%n", e);
+            getPluginLogger().severe("Hiba történt a I/O művelet közben!");
+            e.printStackTrace();
         }
     }
 
     private void loadData() {
         if (!dataFile.exists()) {
+            if (dataFile.getParentFile().mkdirs()) {
+                getPluginLogger().info("Parent directories are generated successfully!");
+            }
+
             saveData();
             return;
         }
@@ -100,7 +105,8 @@ public final class SafeMining extends JavaPlugin {
             }.getType());
             getPluginLogger().info("Loaded " + enabledUsers.size() + " enabled user UUIDs from " + dataFile.getName());
         } catch (IOException e) {
-            System.err.format("IOException: %s%n", e);
+            getPluginLogger().severe("Hiba történt a I/O művelet közben!");
+            e.printStackTrace();
         }
     }
 }
