@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 public class ListenerClass implements Listener {
     private final Plugin instance;
@@ -36,14 +37,23 @@ public class ListenerClass implements Listener {
             return;
         }
 
+        World world = e.getPlayer().getWorld();
+
         for (Player p : Bukkit.getOnlinePlayers()) {
             if (p.isSleeping()) {
                 continue;
             }
 
-            if (!p.getUniqueId().equals(e.getPlayer().getUniqueId())) {
-                p.sendTitle("§4ALVÁS!", "§7Kéne aludni!", 10, 100, 20);
+            if (!p.getWorld().getName().equals(world.getName())) {
+                continue;
             }
+
+            if (p.getUniqueId().equals(e.getPlayer().getUniqueId())) {
+                continue;
+            }
+
+            p.sendTitle("§4ALVÁS!", "§7Kéne aludni!", 10, 100, 20);
+            p.playSound(p, Sound.ENTITY_PLAYER_LEVELUP, 1, 2);
         }
     }
 
@@ -51,12 +61,28 @@ public class ListenerClass implements Listener {
     public void onTeleport(final @NotNull PlayerTeleportEvent e) {
         Player player = e.getPlayer();
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1, 1);
-        player.getWorld().spawnParticle(Particle.PORTAL, player.getLocation(), 30, 0, 2, 0);
+        player.getWorld().spawnParticle(Particle.PORTAL, player.getLocation(), 50, 1, 2, 1);
     }
 
     @EventHandler
     public void onBlockBreak(final @NotNull BlockDropItemEvent e) {
-        if (!SafeMining.getEnabledUsers().contains(e.getPlayer().getUniqueId())) {
+        UUID playerUUID = e.getPlayer().getUniqueId();
+
+        if (!SafeMining.getEnabledUsers().contains(playerUUID)) {
+            long currentUnixTime = System.currentTimeMillis() / 1000;
+            if (!SafeMining.getReminderTickMap().containsKey(playerUUID)) {
+                SafeMining.getReminderTickMap().put(playerUUID, currentUnixTime);
+            } else if (SafeMining.getEnabledUsers().contains(playerUUID)) {
+                if (currentUnixTime < SafeMining.getReminderTickMap().get(playerUUID) + 60 * 10) {
+                    return;
+                }
+            } else {
+                return;
+            }
+
+            e.getPlayer().sendMessage(SafeMining.getPluginPrefix() + "§6§lTIPP: §7Majd ha tizedik alkalommal is belehullik a lávába a cuccod vagy leesik egy szakadékba az item akkor" +
+                    " csak kapcsold be a SafeMining opciót a §6§l/sm enable §7parancsal! SZIVESEN!");
+
             return;
         }
 

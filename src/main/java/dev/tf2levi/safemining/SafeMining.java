@@ -13,15 +13,14 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Logger;
 
 public final class SafeMining extends JavaPlugin {
     public static String pluginPrefix = "§a§lSafeMining §7● ";
     private static SafeMining instance;
-    private static List<UUID> enabledUsers = new ArrayList<>();
+    private static LinkedList<UUID> enabledUsers = new LinkedList<>();
+    private static final HashMap<UUID, Long> reminderTickMap = new HashMap<>();
     private static Logger pluginLogger;
     private static File dataFile;
 
@@ -29,8 +28,12 @@ public final class SafeMining extends JavaPlugin {
         return instance;
     }
 
-    public static List<UUID> getEnabledUsers() {
+    public static LinkedList<UUID> getEnabledUsers() {
         return enabledUsers;
+    }
+
+    public static HashMap<UUID, Long> getReminderTickMap() {
+        return reminderTickMap;
     }
 
     public static Logger getPluginLogger() {
@@ -101,7 +104,7 @@ public final class SafeMining extends JavaPlugin {
             }
 
             Gson gson = new Gson();
-            enabledUsers = gson.fromJson(contentBuilder.toString(), new TypeToken<ArrayList<UUID>>() {
+            enabledUsers = gson.fromJson(contentBuilder.toString(), new TypeToken<LinkedList<UUID>>() {
             }.getType());
             getPluginLogger().info("Loaded " + enabledUsers.size() + " enabled user UUIDs from " + dataFile.getName());
         } catch (IOException e) {
